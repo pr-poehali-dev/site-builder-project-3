@@ -27,8 +27,7 @@ export default function Index() {
   const [publishedUrl, setPublishedUrl] = useState('');
   const [draggedBlock, setDraggedBlock] = useState<string | null>(null);
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
-  const [previewKey, setPreviewKey] = useState(0);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [previewHTML, setPreviewHTML] = useState('');
   const { toast } = useToast();
 
   const generateBlocksHTML = () => {
@@ -89,24 +88,13 @@ ${blocksHTML}
   };
 
   const refreshPreview = () => {
-    setPreviewKey(prev => prev + 1);
+    setPreviewHTML(getFullHTML());
     toast({ title: 'Превью обновлено' });
   };
 
   useEffect(() => {
-    const updateIframe = () => {
-      if (iframeRef.current) {
-        const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
-        if (iframeDoc) {
-          iframeDoc.open();
-          iframeDoc.write(getFullHTML());
-          iframeDoc.close();
-        }
-      }
-    };
-    
-    setTimeout(updateIframe, 100);
-  }, [previewKey, htmlCode, cssCode, jsCode]);
+    setPreviewHTML(getFullHTML());
+  }, [htmlCode, cssCode, jsCode]);
 
   const addBlock = (type: BlockType) => {
     const newBlock: Block = {
@@ -326,11 +314,10 @@ ${blocksHTML}
               </div>
               <div className="h-[calc(100%-52px)] overflow-auto bg-white">
                 <iframe
-                  ref={iframeRef}
-                  key={previewKey}
+                  srcDoc={previewHTML}
                   className="w-full h-full border-none"
                   title="Preview"
-                  sandbox="allow-scripts"
+                  sandbox="allow-scripts allow-same-origin"
                 />
               </div>
             </Card>
@@ -444,11 +431,10 @@ ${blocksHTML}
               </div>
               <div className="flex-1 overflow-auto bg-white min-h-0">
                 <iframe
-                  ref={iframeRef}
-                  key={previewKey}
+                  srcDoc={previewHTML}
                   className="w-full h-full border-none"
                   title="Preview"
-                  sandbox="allow-scripts"
+                  sandbox="allow-scripts allow-same-origin"
                 />
               </div>
               <div className="p-2 border-t bg-gray-50 text-center text-sm text-gray-500 flex-shrink-0">
