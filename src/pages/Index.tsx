@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,7 +27,82 @@ export default function Index() {
   const [publishedUrl, setPublishedUrl] = useState('');
   const [draggedBlock, setDraggedBlock] = useState<string | null>(null);
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
+  const [previewKey, setPreviewKey] = useState(0);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
+
+  const generateBlocksHTML = () => {
+    return blocks.map(block => {
+      if (block.type === 'text') {
+        return `<p>${block.content}</p>`;
+      }
+      if (block.type === 'button') {
+        return `<button style="padding: 8px 24px; background: #6366f1; color: white; border: none; border-radius: 8px; cursor: pointer;">${block.content}</button>`;
+      }
+      if (block.type === 'link') {
+        return `<a href="${block.href || '#'}" style="color: #6366f1; text-decoration: underline;">${block.content}</a>`;
+      }
+      if (block.type === 'image') {
+        return `<img src="${block.content}" alt="Image" style="max-width: 100%; border-radius: 8px;" />`;
+      }
+      return '';
+    }).join('\n');
+  };
+
+  const updateHTMLWithBlocks = () => {
+    const blocksHTML = generateBlocksHTML();
+    const bodyMatch = htmlCode.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+    
+    if (bodyMatch) {
+      const newHTML = htmlCode.replace(
+        /<body[^>]*>[\s\S]*?<\/body>/i,
+        `<body>\n${blocksHTML}\n</body>`
+      );
+      setHtmlCode(newHTML);
+    } else {
+      const basicHTML = `<!DOCTYPE html>
+<html>
+<head>
+  <title>PlutStudio Project</title>
+</head>
+<body>
+${blocksHTML}
+</body>
+</html>`;
+      setHtmlCode(basicHTML);
+    }
+    toast({ title: 'HTML обновлён', description: 'Блоки добавлены в код' });
+  };
+
+  const getFullHTML = () => {
+    let html = htmlCode;
+    
+    if (!html.toLowerCase().includes('<style>') && cssCode.trim()) {
+      html = html.replace('</head>', `<style>\n${cssCode}\n</style>\n</head>`);
+    }
+    
+    if (!html.toLowerCase().includes('<script>') && jsCode.trim()) {
+      html = html.replace('</body>', `<script>\n${jsCode}\n</script>\n</body>`);
+    }
+    
+    return html;
+  };
+
+  const refreshPreview = () => {
+    setPreviewKey(prev => prev + 1);
+    toast({ title: 'Превью обновлено' });
+  };
+
+  useEffect(() => {
+    if (iframeRef.current) {
+      const iframeDoc = iframeRef.current.contentDocument;
+      if (iframeDoc) {
+        iframeDoc.open();
+        iframeDoc.write(getFullHTML());
+        iframeDoc.close();
+      }
+    }
+  }, [previewKey, htmlCode, cssCode, jsCode]);
 
   const addBlock = (type: BlockType) => {
     const newBlock: Block = {
@@ -108,7 +183,7 @@ export default function Index() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
@@ -176,7 +251,7 @@ export default function Index() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="editor" className="flex-1 px-6 pb-6 mt-4 overflow-hidden flex flex-col min-h-0">
+          <TabsContent value="editor" className="flex-1 px-6 pb-6 mt-4 overflow-hidden flex flex-col gap-4 min-h-0">
             <Card className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
               <div className="flex items-center justify-between mb-4 flex-shrink-0">
                 <div className="flex gap-2">
@@ -205,27 +280,54 @@ export default function Index() {
                     JavaScript
                   </Button>
                 </div>
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    accept={selectedCode === 'html' ? '.html' : selectedCode === 'css' ? '.css' : '.js'}
-                    className="hidden"
-                    onChange={(e) => handleFileImport(selectedCode, e)}
-                  />
-                  <Button size="sm" variant="outline" asChild>
-                    <span>
-                      <Icon name="Upload" className="mr-1" size={14} />
-                      Импорт {selectedCode.toUpperCase()}
-                    </span>
+                <div className="flex gap-2">
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      accept={selectedCode === 'html' ? '.html' : selectedCode === 'css' ? '.css' : '.js'}
+                      className="hidden"
+                      onChange={(e) => handleFileImport(selectedCode, e)}
+                    />
+                    <Button size="sm" variant="outline" asChild>
+                      <span>
+                        <Icon name="Upload" className="mr-1" size={14} />
+                        Импорт
+                      </span>
+                    </Button>
+                  </label>
+                  <Button size="sm" variant="outline" onClick={refreshPreview}>
+                    <Icon name="RefreshCw" className="mr-1" size={14} />
+                    Обновить превью
                   </Button>
-                </label>
+                </div>
               </div>
               <Textarea
                 value={getCurrentCode()}
                 onChange={(e) => setCurrentCode(e.target.value)}
-                className="flex-1 font-mono text-sm resize-none min-h-0"
+                className="flex-1 font-mono text-sm resize-none min-h-0 overflow-auto"
                 placeholder={`Введите ${selectedCode.toUpperCase()} код...`}
               />
+            </Card>
+
+            <Card className="h-[300px] flex-shrink-0 overflow-hidden">
+              <div className="p-3 border-b bg-gray-50 flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Icon name="Eye" size={16} />
+                  Превью
+                </span>
+                <Button size="sm" variant="ghost" onClick={refreshPreview}>
+                  <Icon name="RefreshCw" size={14} />
+                </Button>
+              </div>
+              <div className="h-[calc(100%-52px)] overflow-auto bg-white">
+                <iframe
+                  ref={iframeRef}
+                  key={previewKey}
+                  className="w-full h-full border-none"
+                  title="Preview"
+                  sandbox="allow-scripts"
+                />
+              </div>
             </Card>
           </TabsContent>
 
@@ -254,6 +356,14 @@ export default function Index() {
                     <span>Картинка</span>
                   </Button>
                 </div>
+                <Button 
+                  className="w-full mt-4" 
+                  variant="default"
+                  onClick={updateHTMLWithBlocks}
+                >
+                  <Icon name="Code2" className="mr-2" size={16} />
+                  Добавить блоки в HTML
+                </Button>
               </Card>
 
               <Card className="p-6 h-fit">
@@ -319,83 +429,25 @@ export default function Index() {
           </TabsContent>
 
           <TabsContent value="preview" className="flex-1 px-6 pb-6 mt-4 overflow-hidden flex flex-col min-h-0">
-            <Card className="flex-1 p-0 overflow-auto min-h-0">
-              <div className="p-8 min-h-full">
-                {blocks.map((block, index) => (
-                  <div 
-                    key={block.id} 
-                    className="mb-4 group relative cursor-move border-2 border-transparent hover:border-primary/30 rounded-lg p-2 transition-all"
-                    draggable
-                    onDragStart={() => handleDragStart(block.id)}
-                    onDragOver={(e) => handleDragOver(e, block.id)}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 p-1">
-                      <Button size="sm" variant="secondary" className="h-7 w-7 p-0" onClick={() => setEditingBlockId(block.id)}>
-                        <Icon name="Pencil" size={14} />
-                      </Button>
-                      <Button size="sm" variant="destructive" className="h-7 w-7 p-0" onClick={() => deleteBlock(block.id)}>
-                        <Icon name="Trash2" size={14} />
-                      </Button>
-                    </div>
-                    
-                    {editingBlockId === block.id ? (
-                      <div className="space-y-2">
-                        <Input
-                          value={block.content}
-                          onChange={(e) => updateBlock(block.id, e.target.value)}
-                          placeholder="Содержимое"
-                          className="text-sm"
-                          autoFocus
-                        />
-                        {block.type === 'link' && (
-                          <Input
-                            value={block.href}
-                            onChange={(e) => updateBlock(block.id, block.content, e.target.value)}
-                            placeholder="https://example.com"
-                            className="text-sm"
-                          />
-                        )}
-                        <Button size="sm" onClick={() => setEditingBlockId(null)}>
-                          <Icon name="Check" className="mr-1" size={14} />
-                          Готово
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        {block.type === 'text' && (
-                          <p className="text-gray-800">{block.content}</p>
-                        )}
-                        {block.type === 'button' && (
-                          <button className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
-                            {block.content}
-                          </button>
-                        )}
-                        {block.type === 'link' && (
-                          <a href={block.href} className="text-primary underline hover:text-primary/80">
-                            {block.content}
-                          </a>
-                        )}
-                        {block.type === 'image' && (
-                          <img src={block.content} alt="Block" className="max-w-full rounded-lg" />
-                        )}
-                      </>
-                    )}
-                    
-                    <div className="absolute -left-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Icon name="GripVertical" size={20} className="text-gray-400" />
-                    </div>
-                  </div>
-                ))}
-                {blocks.length === 0 && (
-                  <div className="text-center py-20 text-gray-400">
-                    <Icon name="Eye" size={64} className="mx-auto mb-4 opacity-20" />
-                    <p className="text-lg">Добавьте блоки для превью</p>
-                  </div>
-                )}
-                <div className="mt-8 text-center text-sm text-gray-500 font-medium">
-                  PlutStudio
-                </div>
+            <Card className="flex-1 overflow-hidden flex flex-col min-h-0">
+              <div className="p-3 border-b bg-gray-50 flex items-center justify-between flex-shrink-0">
+                <span className="text-sm font-medium text-gray-700">Превью проекта</span>
+                <Button size="sm" variant="outline" onClick={refreshPreview}>
+                  <Icon name="RefreshCw" className="mr-1" size={14} />
+                  Обновить
+                </Button>
+              </div>
+              <div className="flex-1 overflow-auto bg-white min-h-0">
+                <iframe
+                  ref={iframeRef}
+                  key={previewKey}
+                  className="w-full h-full border-none"
+                  title="Preview"
+                  sandbox="allow-scripts"
+                />
+              </div>
+              <div className="p-2 border-t bg-gray-50 text-center text-sm text-gray-500 flex-shrink-0">
+                PlutStudio
               </div>
             </Card>
           </TabsContent>
