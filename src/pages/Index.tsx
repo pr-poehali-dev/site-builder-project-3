@@ -94,14 +94,18 @@ ${blocksHTML}
   };
 
   useEffect(() => {
-    if (iframeRef.current) {
-      const iframeDoc = iframeRef.current.contentDocument;
-      if (iframeDoc) {
-        iframeDoc.open();
-        iframeDoc.write(getFullHTML());
-        iframeDoc.close();
+    const updateIframe = () => {
+      if (iframeRef.current) {
+        const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+        if (iframeDoc) {
+          iframeDoc.open();
+          iframeDoc.write(getFullHTML());
+          iframeDoc.close();
+        }
       }
-    }
+    };
+    
+    setTimeout(updateIframe, 100);
   }, [previewKey, htmlCode, cssCode, jsCode]);
 
   const addBlock = (type: BlockType) => {
@@ -252,7 +256,7 @@ ${blocksHTML}
           </TabsList>
 
           <TabsContent value="editor" className="flex-1 px-6 pb-6 mt-4 overflow-hidden flex flex-col gap-4 min-h-0">
-            <Card className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
+            <Card className="flex-[2] p-4 flex flex-col min-h-0 overflow-hidden">
               <div className="flex items-center justify-between mb-4 flex-shrink-0">
                 <div className="flex gap-2">
                   <Button 
@@ -304,12 +308,13 @@ ${blocksHTML}
               <Textarea
                 value={getCurrentCode()}
                 onChange={(e) => setCurrentCode(e.target.value)}
-                className="flex-1 font-mono text-sm resize-none min-h-0 overflow-auto"
+                className="flex-1 font-mono text-base resize-none min-h-0 overflow-auto leading-relaxed"
+                style={{ minHeight: '400px' }}
                 placeholder={`Введите ${selectedCode.toUpperCase()} код...`}
               />
             </Card>
 
-            <Card className="h-[300px] flex-shrink-0 overflow-hidden">
+            <Card className="flex-1 flex-shrink-0 overflow-hidden">
               <div className="p-3 border-b bg-gray-50 flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <Icon name="Eye" size={16} />
