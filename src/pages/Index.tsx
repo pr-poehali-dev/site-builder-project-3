@@ -225,9 +225,9 @@ ${blocksHTML}
         </Sheet>
       </header>
 
-      <main className="flex-1 overflow-hidden flex flex-col min-h-0">
-        <Tabs defaultValue="editor" className="h-full flex flex-col min-h-0">
-          <TabsList className="mx-6 mt-4 w-fit flex-shrink-0 h-12">
+      <main className="flex-1 overflow-auto">
+        <Tabs defaultValue="editor" className="h-full">
+          <TabsList className="mx-6 mt-4 w-fit h-11">
             <TabsTrigger value="editor" id="editor-tab" className="text-base px-6">
               <Icon name="Code" className="mr-2" size={20} />
               Редактор
@@ -242,12 +242,12 @@ ${blocksHTML}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="editor" className="flex-1 px-6 pb-6 mt-4 overflow-hidden flex gap-6 min-h-0">
-            <Card className="flex-1 p-6 flex flex-col min-h-0 overflow-hidden">
-              <div className="flex items-center justify-between mb-6 flex-shrink-0">
+          <TabsContent value="editor" className="px-6 pb-6 mt-4 space-y-6">
+            <Card className="p-5">
+              <div className="flex items-center justify-between mb-5">
                 <div className="flex gap-3">
                   <Button 
-                    size="lg" 
+                    size="default" 
                     variant={selectedCode === 'html' ? 'default' : 'outline'}
                     onClick={() => setSelectedCode('html')}
                     className="text-base"
@@ -256,7 +256,7 @@ ${blocksHTML}
                     HTML
                   </Button>
                   <Button 
-                    size="lg" 
+                    size="default" 
                     variant={selectedCode === 'css' ? 'default' : 'outline'}
                     onClick={() => setSelectedCode('css')}
                     className="text-base"
@@ -265,7 +265,7 @@ ${blocksHTML}
                     CSS
                   </Button>
                   <Button 
-                    size="lg" 
+                    size="default" 
                     variant={selectedCode === 'js' ? 'default' : 'outline'}
                     onClick={() => setSelectedCode('js')}
                     className="text-base"
@@ -324,49 +324,49 @@ ${blocksHTML}
             </Card>
           </TabsContent>
 
-          <TabsContent value="blocks" className="flex-1 px-6 pb-6 mt-4 overflow-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <TabsContent value="blocks" className="px-6 pb-6 mt-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="p-8 h-fit">
-                <h3 className="text-2xl font-semibold mb-6 flex items-center gap-3">
-                  <Icon name="Plus" size={24} />
+                <h3 className="text-xl font-semibold mb-5 flex items-center gap-2">
+                  <Icon name="Plus" size={22} />
                   Добавить блок
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button onClick={() => addBlock('text')} variant="outline" className="h-32 flex flex-col gap-3 text-lg">
-                    <Icon name="Type" size={32} />
-                    <span>Текст</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button onClick={() => addBlock('text')} variant="outline" className="h-24 flex flex-col gap-2">
+                    <Icon name="Type" size={28} />
+                    <span className="text-base">Текст</span>
                   </Button>
-                  <Button onClick={() => addBlock('button')} variant="outline" className="h-32 flex flex-col gap-3 text-lg">
-                    <Icon name="RectangleHorizontal" size={32} />
-                    <span>Кнопка</span>
+                  <Button onClick={() => addBlock('button')} variant="outline" className="h-24 flex flex-col gap-2">
+                    <Icon name="RectangleHorizontal" size={28} />
+                    <span className="text-base">Кнопка</span>
                   </Button>
-                  <Button onClick={() => addBlock('link')} variant="outline" className="h-32 flex flex-col gap-3 text-lg">
-                    <Icon name="Link" size={32} />
-                    <span>Текст с ссылкой</span>
+                  <Button onClick={() => addBlock('link')} variant="outline" className="h-24 flex flex-col gap-2">
+                    <Icon name="Link" size={28} />
+                    <span className="text-base">Текст с ссылкой</span>
                   </Button>
-                  <Button onClick={() => addBlock('image')} variant="outline" className="h-32 flex flex-col gap-3 text-lg">
-                    <Icon name="Image" size={32} />
-                    <span>Картинка</span>
+                  <Button onClick={() => addBlock('image')} variant="outline" className="h-24 flex flex-col gap-2">
+                    <Icon name="Image" size={28} />
+                    <span className="text-base">Картинка</span>
                   </Button>
                 </div>
                 <Button 
-                  className="w-full mt-6 h-14 text-lg" 
+                  className="w-full mt-5 h-12" 
                   variant="default"
                   onClick={updateHTMLWithBlocks}
                 >
-                  <Icon name="Code2" className="mr-2" size={20} />
+                  <Icon name="Code2" className="mr-2" size={18} />
                   Добавить блоки в HTML
                 </Button>
               </Card>
 
-              <Card className="p-8 h-fit">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-semibold flex items-center gap-3">
-                    <Icon name="Layers" size={24} />
+              <Card className="p-6 h-fit">
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-xl font-semibold flex items-center gap-2">
+                    <Icon name="Layers" size={22} />
                     Блоки ({blocks.length})
                   </h3>
                 </div>
-                <div className="space-y-4 max-h-[600px] overflow-auto">
+                <div className="space-y-3 max-h-[500px] overflow-auto">
                   {blocks.map(block => (
                     <Card 
                       key={block.id} 
@@ -376,13 +376,13 @@ ${blocksHTML}
                       onDragOver={(e) => handleDragOver(e, block.id)}
                       onDragEnd={handleDragEnd}
                     >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <Icon name="GripVertical" size={20} className="text-gray-400" />
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Icon name="GripVertical" size={18} className="text-gray-400" />
                           <span className="text-base font-medium text-gray-600 capitalize">{block.type}</span>
                         </div>
-                        <Button size="default" variant="ghost" onClick={() => deleteBlock(block.id)}>
-                          <Icon name="Trash2" size={20} />
+                        <Button size="sm" variant="ghost" onClick={() => deleteBlock(block.id)}>
+                          <Icon name="Trash2" size={18} />
                         </Button>
                       </div>
                       {block.type === 'image' ? (
@@ -390,14 +390,14 @@ ${blocksHTML}
                           value={block.content}
                           onChange={(e) => updateBlock(block.id, e.target.value)}
                           placeholder="URL изображения"
-                          className="text-base h-12"
+                          className="text-base h-11"
                         />
                       ) : (
                         <Input
                           value={block.content}
                           onChange={(e) => updateBlock(block.id, e.target.value)}
                           placeholder="Содержимое"
-                          className="text-base h-12"
+                          className="text-base h-11"
                         />
                       )}
                       {block.type === 'link' && (
@@ -405,15 +405,15 @@ ${blocksHTML}
                           value={block.href}
                           onChange={(e) => updateBlock(block.id, block.content, e.target.value)}
                           placeholder="https://example.com"
-                          className="text-base h-12 mt-3"
+                          className="text-base h-11 mt-2"
                         />
                       )}
                     </Card>
                   ))}
                   {blocks.length === 0 && (
-                    <div className="text-center py-12 text-gray-400">
-                      <Icon name="Box" size={64} className="mx-auto mb-4 opacity-30" />
-                      <p className="text-lg">Блоки не добавлены</p>
+                    <div className="text-center py-10 text-gray-400">
+                      <Icon name="Box" size={56} className="mx-auto mb-3 opacity-30" />
+                      <p className="text-base">Блоки не добавлены</p>
                     </div>
                   )}
                 </div>
@@ -421,16 +421,16 @@ ${blocksHTML}
             </div>
           </TabsContent>
 
-          <TabsContent value="preview" className="flex-1 px-6 pb-6 mt-4 overflow-hidden flex flex-col min-h-0">
-            <Card className="flex-1 overflow-hidden flex flex-col min-h-0">
-              <div className="p-4 border-b bg-gray-50 flex items-center justify-between flex-shrink-0">
-                <span className="text-lg font-medium text-gray-700">Превью проекта</span>
-                <Button size="lg" variant="outline" onClick={refreshPreview}>
-                  <Icon name="RefreshCw" className="mr-2" size={18} />
+          <TabsContent value="preview" className="px-6 pb-6 mt-4">
+            <Card className="overflow-hidden">
+              <div className="p-4 border-b bg-gray-50 flex items-center justify-between">
+                <span className="text-base font-medium text-gray-700">Превью проекта</span>
+                <Button size="default" variant="outline" onClick={refreshPreview}>
+                  <Icon name="RefreshCw" className="mr-2" size={16} />
                   Обновить
                 </Button>
               </div>
-              <div className="flex-1 overflow-auto bg-white min-h-0">
+              <div className="h-[calc(100vh-220px)] bg-white">
                 <iframe
                   srcDoc={previewHTML}
                   className="w-full h-full border-none"
@@ -438,7 +438,7 @@ ${blocksHTML}
                   sandbox="allow-scripts allow-same-origin"
                 />
               </div>
-              <div className="p-3 border-t bg-gray-50 text-center text-base text-gray-500 flex-shrink-0">
+              <div className="p-3 border-t bg-gray-50 text-center text-sm text-gray-500">
                 PlutStudio
               </div>
             </Card>
