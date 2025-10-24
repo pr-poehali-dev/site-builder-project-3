@@ -175,40 +175,40 @@ ${blocksHTML}
 
   return (
     <div className="h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
-      <header className="bg-white border-b border-gray-200 px-6 py-5 flex items-center justify-between flex-shrink-0">
+      <header className="bg-white border-b border-gray-200 px-3 md:px-6 py-3 md:py-5 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-            <Icon name="Code2" className="text-white" size={28} />
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-lg flex items-center justify-center">
+            <Icon name="Code2" className="text-white" size={24} />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">PlutStudio</h1>
+          <h1 className="text-xl md:text-3xl font-bold text-gray-900">PlutStudio</h1>
         </div>
         
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="lg" className="relative">
-              <Icon name="Menu" size={28} />
+            <Button variant="ghost" size="default" className="relative md:size-lg">
+              <Icon name="Menu" size={24} />
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-[400px]">
+          <SheetContent className="w-[85vw] sm:w-[400px]">
             <div className="flex flex-col gap-5 mt-8">
-              <h2 className="text-2xl font-semibold mb-4">Меню</h2>
-              <Button variant="ghost" size="lg" className="justify-start text-lg h-14" onClick={() => document.getElementById('editor-tab')?.click()}>
+              <h2 className="text-xl md:text-2xl font-semibold mb-4">Меню</h2>
+              <Button variant="ghost" size="default" className="justify-start text-base md:text-lg h-12 md:h-14" onClick={() => document.getElementById('editor-tab')?.click()}>
                 <Icon name="Code" className="mr-3" size={24} />
                 Редактор
               </Button>
-              <Button variant="ghost" size="lg" className="justify-start text-lg h-14" onClick={() => document.getElementById('blocks-tab')?.click()}>
+              <Button variant="ghost" size="default" className="justify-start text-base md:text-lg h-12 md:h-14" onClick={() => document.getElementById('blocks-tab')?.click()}>
                 <Icon name="Box" className="mr-3" size={24} />
                 Конструктор
               </Button>
-              <Button variant="ghost" size="lg" className="justify-start text-lg h-14" onClick={() => document.getElementById('preview-tab')?.click()}>
+              <Button variant="ghost" size="default" className="justify-start text-base md:text-lg h-12 md:h-14" onClick={() => document.getElementById('preview-tab')?.click()}>
                 <Icon name="Eye" className="mr-3" size={24} />
                 Превью
               </Button>
-              <Button variant="default" size="lg" className="justify-start text-lg h-14" onClick={handlePublish}>
+              <Button variant="default" size="default" className="justify-start text-base md:text-lg h-12 md:h-14" onClick={handlePublish}>
                 <Icon name="Upload" className="mr-3" size={24} />
                 Опубликовать
               </Button>
-              <Button variant="ghost" size="lg" className="justify-start text-lg h-14" asChild>
+              <Button variant="ghost" size="default" className="justify-start text-base md:text-lg h-12 md:h-14" asChild>
                 <a href="https://t.me/plutstudio" target="_blank" rel="noopener noreferrer">
                   <Icon name="Send" className="mr-3" size={24} />
                   Telegram канал
@@ -227,7 +227,7 @@ ${blocksHTML}
 
       <main className="flex-1 overflow-auto">
         <Tabs defaultValue="editor" className="h-full">
-          <TabsList className="mx-6 mt-4 w-fit h-11">
+          <TabsList className="mx-3 md:mx-6 mt-3 md:mt-4 w-fit h-10 md:h-11">
             <TabsTrigger value="editor" id="editor-tab" className="text-base px-6">
               <Icon name="Code" className="mr-2" size={20} />
               Редактор
@@ -242,9 +242,9 @@ ${blocksHTML}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="editor" className="px-6 pb-6 mt-4 space-y-6">
-            <Card className="p-5">
-              <div className="flex items-center justify-between mb-5">
+          <TabsContent value="editor" className="px-3 md:px-6 pb-4 md:pb-6 mt-3 md:mt-4 space-y-4 md:space-y-6">
+            <Card className="p-3 md:p-5">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-between mb-4 md:mb-5">
                 <div className="flex gap-3">
                   <Button 
                     size="default" 
@@ -324,42 +324,42 @@ ${blocksHTML}
             </Card>
           </TabsContent>
 
-          <TabsContent value="blocks" className="px-6 pb-6 mt-4">
+          <TabsContent value="blocks" className="px-3 md:px-6 pb-4 md:pb-6 mt-3 md:mt-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="p-8 h-fit">
-                <h3 className="text-xl font-semibold mb-5 flex items-center gap-2">
+                <h3 className="text-lg md:text-xl font-semibold mb-4 md:mb-5 flex items-center gap-2">
                   <Icon name="Plus" size={22} />
                   Добавить блок
                 </h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <Button onClick={() => addBlock('text')} variant="outline" className="h-24 flex flex-col gap-2">
-                    <Icon name="Type" size={28} />
-                    <span className="text-base">Текст</span>
+                <div className="grid grid-cols-2 gap-2 md:gap-3">
+                  <Button onClick={() => addBlock('text')} variant="outline" className="h-20 md:h-24 flex flex-col gap-1.5 md:gap-2">
+                    <Icon name="Type" className="w-6 h-6 md:w-7 md:h-7" />
+                    <span className="text-sm md:text-base">Текст</span>
                   </Button>
-                  <Button onClick={() => addBlock('button')} variant="outline" className="h-24 flex flex-col gap-2">
-                    <Icon name="RectangleHorizontal" size={28} />
-                    <span className="text-base">Кнопка</span>
+                  <Button onClick={() => addBlock('button')} variant="outline" className="h-20 md:h-24 flex flex-col gap-1.5 md:gap-2">
+                    <Icon name="RectangleHorizontal" className="w-6 h-6 md:w-7 md:h-7" />
+                    <span className="text-sm md:text-base">Кнопка</span>
                   </Button>
-                  <Button onClick={() => addBlock('link')} variant="outline" className="h-24 flex flex-col gap-2">
-                    <Icon name="Link" size={28} />
-                    <span className="text-base">Текст с ссылкой</span>
+                  <Button onClick={() => addBlock('link')} variant="outline" className="h-20 md:h-24 flex flex-col gap-1.5 md:gap-2">
+                    <Icon name="Link" className="w-6 h-6 md:w-7 md:h-7" />
+                    <span className="text-sm md:text-base">Текст с ссылкой</span>
                   </Button>
-                  <Button onClick={() => addBlock('image')} variant="outline" className="h-24 flex flex-col gap-2">
-                    <Icon name="Image" size={28} />
-                    <span className="text-base">Картинка</span>
+                  <Button onClick={() => addBlock('image')} variant="outline" className="h-20 md:h-24 flex flex-col gap-1.5 md:gap-2">
+                    <Icon name="Image" className="w-6 h-6 md:w-7 md:h-7" />
+                    <span className="text-sm md:text-base">Картинка</span>
                   </Button>
                 </div>
                 <Button 
-                  className="w-full mt-5 h-12" 
+                  className="w-full mt-4 md:mt-5 h-11 md:h-12 text-sm md:text-base" 
                   variant="default"
                   onClick={updateHTMLWithBlocks}
                 >
-                  <Icon name="Code2" className="mr-2" size={18} />
+                  <Icon name="Code2" className="mr-1.5 md:mr-2" size={16} />
                   Добавить блоки в HTML
                 </Button>
               </Card>
 
-              <Card className="p-6 h-fit">
+              <Card className="p-4 md:p-6 h-fit"
                 <div className="flex items-center justify-between mb-5">
                   <h3 className="text-xl font-semibold flex items-center gap-2">
                     <Icon name="Layers" size={22} />
@@ -421,16 +421,16 @@ ${blocksHTML}
             </div>
           </TabsContent>
 
-          <TabsContent value="preview" className="px-6 pb-6 mt-4">
+          <TabsContent value="preview" className="px-3 md:px-6 pb-4 md:pb-6 mt-3 md:mt-4">
             <Card className="overflow-hidden">
-              <div className="p-4 border-b bg-gray-50 flex items-center justify-between">
+              <div className="p-3 md:p-4 border-b bg-gray-50 flex items-center justify-between">
                 <span className="text-base font-medium text-gray-700">Превью проекта</span>
                 <Button size="default" variant="outline" onClick={refreshPreview}>
                   <Icon name="RefreshCw" className="mr-2" size={16} />
                   Обновить
                 </Button>
               </div>
-              <div className="h-[calc(100vh-220px)] bg-white">
+              <div className="h-[calc(100vh-180px)] md:h-[calc(100vh-220px)] bg-white">
                 <iframe
                   srcDoc={previewHTML}
                   className="w-full h-full border-none"
